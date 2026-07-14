@@ -1,0 +1,28 @@
+'use client'
+
+import { useState } from "react"
+
+const ChatInterface  = () => {
+	
+	const [message,setMessage] = useState<string>("")
+
+
+	return (
+		<>
+		<div className=" flex flex-col w-full h-screen bg-[#1f1f1e] justify-end  " >
+		<div className="max-w-7xl h-[80%] mx-auto overflow-y-auto " >
+		This is the converstaion part  
+		</div>
+		<div className="place-content-center   mx-auto max-w-1/3 bottom-3 inline-block   ">
+		<div className="bg-[#2c2c2a] rounded-2xl" >
+		<input type="text" className=" w-150 h-35    "> 
+		</input>
+		</div>
+		<div className="h-10"></div>
+		</div>
+		</div>
+		</>
+	)
+}
+
+export default ChatInterface
