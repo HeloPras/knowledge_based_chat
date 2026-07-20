@@ -6,8 +6,17 @@ const ChatInterface = () => {
 
 	const [message, setMessage] = useState<string>("")
 
-	useEffect(() => { console.log(message) }, [message]
-	)
+	const submit = async () => {
+		try {
+			const response = await fetch("")
+		} catch (error) {
+
+		}
+	}
+
+	useEffect(() => {
+		console.log(message)
+	}, [message])
 
 	return (
 		<>
@@ -17,8 +26,10 @@ const ChatInterface = () => {
 				</div>
 				<div className="place-content-center   mx-auto max-w-1/3 bottom-3 inline-block   ">
 					<div className="bg-[#2c2c2a] rounded-2xl" >
-						<input onChange={(e) => { setMessage(e.currentTarget.value) }} type="text" className=" w-90 h-35 ">
-						</input>
+						<form onSubmit={submit}>
+							<input onChange={(e) => { setMessage(e.currentTarget.value) }} type="text" className=" w-80 h-35 ">
+							</input>
+						</form>
 					</div>
 					<div className="h-10"></div>
 				</div>
