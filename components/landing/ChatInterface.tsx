@@ -6,10 +6,17 @@ const ChatInterface = () => {
 
 	const [message, setMessage] = useState<string>("")
 
-	const submit = async () => {
+	const submit = async (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault()
 		try {
-			const response = await fetch("")
+			const response = await fetch("api/input", {
+				method: "POST",
+				body: JSON.stringify({ "message": message })
+			})
+			const body = await response.json()
+
 		} catch (error) {
+			console.log(error)
 
 		}
 	}
