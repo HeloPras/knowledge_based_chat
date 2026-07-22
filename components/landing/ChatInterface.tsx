@@ -17,7 +17,6 @@ const ChatInterface = () => {
 
 		} catch (error) {
 			console.log(error)
-
 		}
 	}
 
