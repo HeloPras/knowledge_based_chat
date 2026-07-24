@@ -23,16 +23,15 @@ const ChatInterface = () => {
 
 	return (
 		<>
-			<div className=" flex flex-col w-full h-screen bg-[#1f1f1e] justify-end  " >
+			<div className=" flex flex-col w-full h-screen bg-[#1e1e1e] justify-end  " >
 				<div className="max-w-7xl h-[80%] mx-auto overflow-y-auto " >
-					This is the converstaion part
 					{messages.map(message => (
 						<div key={message.id}>
-							{message.role == 'user' ? 'User:' : 'AI:'}
+							<div className="text-2xl text-[#d4d4d4]">{message.role == 'user' ? 'User:' : 'AI:'}</div>
 							{message.parts.map((part, i) => {
 								switch (part.type) {
 									case "text":
-										return (<div className="" key={message.id}>
+										return (<div className="text-[#f5f5dc] text-xl" key={message.id}>
 											{part.text}
 										</div>)
 								}
