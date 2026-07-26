@@ -11,6 +11,7 @@ import { google } from "@ai-sdk/google";
 export async function POST(req: NextRequest) {
   const { messages }: { messages: UIMessage[] } = await req.json();
   // console.log(messages);
+  //
   // console.log(await convertToModelMessages(messages));
   try {
     const result = streamText({
@@ -22,7 +23,7 @@ export async function POST(req: NextRequest) {
     const message = createUIMessageStreamResponse({
       stream: toUIMessageStream({ stream: result.stream }),
     });
-    console.log(message);
+    // console.log(message);
     return message;
   } catch (error) {
     console.error(error);
