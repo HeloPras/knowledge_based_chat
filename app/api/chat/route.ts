@@ -9,32 +9,39 @@ import {
   createUIMessageStreamResponse,
 } from "ai";
 import { google } from "@ai-sdk/google";
-import { PrismaClient } from "@/app/generated/prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
+import { prisma } from "@/utils/prisma/client";
 
 async function insertUserPrompt(
   message: UIMessage<unknown, UIDataTypes, UITools>,
 ) {
-  const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
-
-  const prisma = new PrismaClient({ adapter });
+  console.log("Initiated prisma client");
   if (!message.parts) {
     return;
   }
+  console.log("Parts check");
   if (message?.parts[0].type != "text") {
     return;
   }
-  prisma.message.create({
+  console.log("Text check");
+  console.log("Performing Insert");
+
+  await prisma.message.create({
     data: {
       role: "User",
       content: message.parts[0].text,
     },
   });
+
+  console.log("Insert Complete");
 }
 
 export async function POST(req: NextRequest) {
   const { messages }: { messages: UIMessage[] } = await req.json();
-  insertUserPrompt(messages[messages.length - 1]);
+  const lastMessage = messages.at(-1);
+  if (!lastMessage) {
+    return NextResponse.json({ error: "No message provided" }, { status: 400 });
+  }
+  await insertUserPrompt(lastMessage);
   // console.log(messages[messages.length - 1]?.parts[0]?.text ?? "");
 
   //
@@ -54,6 +61,6 @@ export async function POST(req: NextRequest) {
     return message;
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ message: "Failed" }, { status: 400 });
+    return NextResponse.json({ message: "Failed" }, { status: 500 });
   }
 }
