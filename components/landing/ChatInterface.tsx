@@ -10,6 +10,7 @@ const ChatInterface = () => {
 	const { messages, sendMessage } = useChat()
 
 	const submit = async (e: React.FormEvent<HTMLFormElement>) => {
+
 		e.preventDefault()
 		try {
 			sendMessage({ text: input })
