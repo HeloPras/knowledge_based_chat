@@ -45,6 +45,7 @@ export async function POST(req: NextRequest) {
   // console.log(messages[messages.length - 1]?.parts[0]?.text ?? "");
 
   //
+  //
   // console.log(await convertToModelMessages(messages));
   try {
     const result = streamText({
