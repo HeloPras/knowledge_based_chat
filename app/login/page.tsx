@@ -1,10 +1,12 @@
-import SignIn from "@/components/login/signin"
+import { SignIn, SignOut } from "@/components/login/auth"
 
 const page = () => {
 	return (
 		<div>
 			This is login page
 			<SignIn></SignIn>
+			<SignOut />
+
 		</div>
 	)
 }
