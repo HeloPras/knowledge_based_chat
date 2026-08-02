@@ -9,7 +9,7 @@ import {
   createUIMessageStreamResponse,
 } from "ai";
 import { google } from "@ai-sdk/google";
-import { prisma } from "@/utils/prisma/client";
+import { prisma } from "@/lib/prisma/client";
 
 async function insertUserPrompt(
   message: UIMessage<unknown, UIDataTypes, UITools>,

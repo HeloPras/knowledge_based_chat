@@ -2,6 +2,7 @@ import ChatInterface from "@/components/landing/ChatInterface";
 
 export default function Home() {
 
+
 	return (
 		<>
 			<div>
