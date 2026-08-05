@@ -4,7 +4,6 @@ import { useState } from "react"
 
 import { useChat } from "@ai-sdk/react"
 
-// interface for chat 
 const ChatInterface = () => {
 
 	const [input, setInput] = useState<string>('')
