@@ -1,14 +1,19 @@
-export { auth as proxy } from "@/lib/auth/auth";
-
 import { auth } from "@/lib/auth/auth";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function middleware(req: NextRequest) {
-  const session = await auth();
+export async function proxy(req: NextRequest) {
+  // const publicRoute = ["/login"];
+  // const session = await auth();
 
-  if (!session) {
+  console.log("We are in the middle ware");
+
+  if (req.nextUrl.pathname !== "/login") {
     return NextResponse.redirect(new URL("/login", req.url));
   } else {
-    return NextResponse.redirect(new URL("/", req.url));
+    return NextResponse.next();
   }
 }
+
+// export const config = {
+//   matcher: ["/login", "/"],
+// };
