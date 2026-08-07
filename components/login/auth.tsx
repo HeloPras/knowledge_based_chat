@@ -1,4 +1,5 @@
 import { signIn, signOut } from "@/lib/auth/auth"
+import { redirect } from "next/navigation"
 
 export function SignIn() {
 	return (
@@ -6,6 +7,7 @@ export function SignIn() {
 			action={async () => {
 				"use server"
 				await signIn("github")
+				redirect("/")
 			}}
 		>
 			<button type="submit">Signin with GitHub</button>

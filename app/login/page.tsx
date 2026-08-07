@@ -1,15 +1,10 @@
-import { SignIn, SignOut } from "@/components/login/auth"
-import { auth } from "@/lib/auth/auth"
+import { SignIn } from "@/components/login/auth"
 
 const page = () => {
-
-
-
 	return (
 		<div>
 			This is login page
 			<SignIn></SignIn>
-			<SignOut />
 
 		</div>
 	)
