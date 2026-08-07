@@ -11,7 +11,7 @@ import {
 import { google } from "@ai-sdk/google";
 import { prisma } from "@/lib/prisma/client";
 
-async function insertUserPrompt(
+async function insertUserMessage(
   message: UIMessage<unknown, UIDataTypes, UITools>,
 ) {
   console.log("Initiated prisma client");
@@ -41,18 +41,31 @@ export async function POST(req: NextRequest) {
   if (!lastMessage) {
     return NextResponse.json({ error: "No message provided" }, { status: 400 });
   }
-  await insertUserPrompt(lastMessage);
+  await insertUserMessage(lastMessage);
   // console.log(messages[messages.length - 1]?.parts[0]?.text ?? "");
 
   //
   //
   // console.log(await convertToModelMessages(messages));
+  let assistantText = "";
   try {
     const result = streamText({
       model: google("gemini-2.5-flash"),
       prompt: await convertToModelMessages(messages),
       instructions:
         "Only provide with text, don't respond with markdown, points, headlines, bulletpoints, only text",
+
+      onChunk({ chunk }) {
+        if (chunk.type === "text-delta") assistantText += chunk.text;
+      },
+      async onFinish() {
+        await prisma.message.create({
+          data: {
+            role: "AI",
+            content: assistantText,
+          },
+        });
+      },
     });
     const message = createUIMessageStreamResponse({
       stream: toUIMessageStream({ stream: result.stream }),
