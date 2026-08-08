@@ -25,12 +25,12 @@ async function insertUserMessage(
   console.log("Text check");
   console.log("Performing Insert");
 
-  await prisma.message.create({
-    data: {
-      role: "User",
-      content: message.parts[0].text,
-    },
-  });
+  // await prisma.message.create({
+  //   data: {
+  //     role: "User",
+  //     content: message.parts[0].text,
+  //   },
+  // });
 
   console.log("Insert Complete");
 }
@@ -41,7 +41,12 @@ export async function POST(req: NextRequest) {
   if (!lastMessage) {
     return NextResponse.json({ error: "No message provided" }, { status: 400 });
   }
+
+  console.log("raw message:", messages);
+  console.log("converted message", await convertToModelMessages(messages));
+
   await insertUserMessage(lastMessage);
+
   // console.log(messages[messages.length - 1]?.parts[0]?.text ?? "");
 
   //
@@ -59,12 +64,12 @@ export async function POST(req: NextRequest) {
         if (chunk.type === "text-delta") assistantText += chunk.text;
       },
       async onFinish() {
-        await prisma.message.create({
-          data: {
-            role: "AI",
-            content: assistantText,
-          },
-        });
+        // await prisma.message.create({
+        //   data: {
+        //     role: "AI",
+        //     content: assistantText,
+        //   },
+        // });
       },
     });
     const message = createUIMessageStreamResponse({
