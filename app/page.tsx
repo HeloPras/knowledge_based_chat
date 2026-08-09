@@ -4,7 +4,6 @@ import { SignOut } from "@/components/login/auth";
 
 export default function Home() {
 
-
 	return (
 		<>
 			<div className="bg-[#1E1E1E]">

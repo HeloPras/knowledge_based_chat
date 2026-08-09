@@ -1,27 +1,38 @@
-'use client'
 
-import { Plus } from "lucide-react"
+import { getChatHistroy } from "@/utils/prisma/chatHistory"
+import NewButton from "./SideBar/newbutton"
+import Chats from "./SideBar/chats"
+// import { useEffect, useState } from "react"
 
-const clicked = async () => {
-	const something = await fetch("/api/chat/history")
+
+const loadConversationHistory = async () => {
+
+	try {
+		const history = await getChatHistroy()
+		return history
+	} catch (error) {
+		throw Error("Hit an error")
+	}
 }
 
 
-const SideBar = () => {
 
-	// const chatHistroy = await fetch()
 
+const SideBar = async () => {
+
+	// const [history, setHistory] = useState()
+	const chatHistroy = await loadConversationHistory() || null
 
 	return (
 		<>
 			<aside className="sticky left-0 h-dvh  w-1/6 bg-[#2C2C2A]">
 				<div className="flex flex-col">
 					<div id="top" className=" flex ">
-						<button className=" cursor-pointer " onClick={() => { clicked() }}><Plus /></button>
+						<NewButton></NewButton>
 					</div>
-					<div className=" h-[1px] w-full bg-white my-3 "></div>
+					<div className=" h-px w-full bg-white my-3 "></div>
 					<div className="flex flex-col ">
-						this is the side bar
+						<Chats chats={chatHistroy}></Chats>
 					</div>
 				</div>
 			</aside>
