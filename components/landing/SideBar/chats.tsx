@@ -1,3 +1,4 @@
+import Link from "next/link"
 
 interface chat {
 	id: number
@@ -17,14 +18,16 @@ const Chats = ({ chats }: { chats: chat[] | null }) => {
 					chats ?
 						chats.map((chat) => {
 							return (
-								<div key={chat.id}>
-									{chat.title}
+								<div key={chat.id} className="cursor-pointer">
+									<Link href={`/c/${chat.id}`}>
+										{chat.title}
+									</Link>
 								</div>
 							)
 						})
 						: <p>No conversations Yet</p>
 				}
-			</div>
+			</div >
 		</>
 	)
 }

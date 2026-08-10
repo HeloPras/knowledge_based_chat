@@ -59,7 +59,7 @@ model Account {
 }
 
 model Conversation{
-	id Int @id @default(autoincrement())
+	id String @id @default(cuid())
 	user User @relation(fields:[userId],references:[id],onDelete: Cascade) 
 	userId String 
 	title String
@@ -71,7 +71,7 @@ model Conversation{
 model Message {
 	id Int @id @default(autoincrement())
 	conversation Conversation @relation(fields:[conversationId], references:[id],onDelete: Cascade)
-	conversationId Int
+	conversationId String
 	role Role @default(System)
 	content String
 }
