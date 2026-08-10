@@ -4,11 +4,10 @@ import { useState } from "react"
 
 import { useChat } from "@ai-sdk/react"
 
-const ChatInterface = () => {
+const ChatInterface = ({ chatId }: { chatId?: string }) => {
 
 	const [input, setInput] = useState<string>('')
 	const { messages, sendMessage } = useChat()
-
 	const submit = async (e: React.FormEvent<HTMLFormElement>) => {
 
 		e.preventDefault()
@@ -19,6 +18,13 @@ const ChatInterface = () => {
 		} catch (error) {
 			console.log(error)
 		}
+	}
+
+
+
+	if (!chatId) {
+		return (
+			<>New Chat</>)
 	}
 
 

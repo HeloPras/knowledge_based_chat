@@ -1,11 +1,13 @@
 
+
 import ChatInterface from "@/components/landing/ChatInterface";
 import SideBar from "@/components/landing/SideBar";
 import { SignOut } from "@/components/login/auth";
 
-const page = async ({ slug }: { slug: Promise<{ param: string }> }) => {
+const Page = async ({ params }: { params: Promise<{ param: string }> }) => {
 
-	const { param } = await slug
+	const { param } = await params
+
 
 	return (
 		<>
@@ -14,7 +16,7 @@ const page = async ({ slug }: { slug: Promise<{ param: string }> }) => {
 					<SideBar></SideBar>
 					<div>
 						<SignOut></SignOut>
-						<ChatInterface></ChatInterface>
+						<ChatInterface chatId={param}></ChatInterface>
 					</div>
 				</div>
 			</div>
@@ -22,4 +24,4 @@ const page = async ({ slug }: { slug: Promise<{ param: string }> }) => {
 	)
 }
 
-export default page
+export default Page
