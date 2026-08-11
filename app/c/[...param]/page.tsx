@@ -16,7 +16,7 @@ const Page = async ({ params }: { params: Promise<{ param: string }> }) => {
 					<SideBar></SideBar>
 					<div>
 						<SignOut></SignOut>
-						<ChatInterface chatId={param}></ChatInterface>
+						<ChatInterface chatId={param} conversationId={param} ></ChatInterface>
 					</div>
 				</div>
 			</div>

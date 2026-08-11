@@ -4,7 +4,7 @@ import { useState } from "react"
 
 import { useChat } from "@ai-sdk/react"
 
-const ChatInterface = ({ chatId }: { chatId?: string }) => {
+const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 
 	const [input, setInput] = useState<string>('')
 	const { messages, sendMessage } = useChat()
@@ -17,14 +17,17 @@ const ChatInterface = ({ chatId }: { chatId?: string }) => {
 
 		} catch (error) {
 			console.log(error)
+
 		}
 	}
 
 
 
-	if (!chatId) {
+	if (!conversationId) {
 		return (
-			<>New Chat</>)
+			<>
+				New Chat
+			</>)
 	}
 
 
