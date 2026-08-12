@@ -3,16 +3,22 @@
 import { useState } from "react"
 
 import { useChat } from "@ai-sdk/react"
+import { DefaultChatTransport } from "ai"
 
 const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 
 	const [input, setInput] = useState<string>('')
-	const { messages, sendMessage } = useChat()
+	const { messages, sendMessage } = useChat(
+		{
+			transport: new DefaultChatTransport({
+				api: `/api/chat/${conversationId}`
+			})
+		})
 	const submit = async (e: React.FormEvent<HTMLFormElement>) => {
 
 		e.preventDefault()
 		try {
-			sendMessage({ text: input })
+			sendMessage({ text: input }, { personal: "hello" })
 			setInput("")
 
 		} catch (error) {
