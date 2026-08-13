@@ -14,11 +14,13 @@ const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 				api: `/api/chat/${conversationId}`
 			})
 		})
+
+
 	const submit = async (e: React.FormEvent<HTMLFormElement>) => {
 
 		e.preventDefault()
 		try {
-			sendMessage({ text: input }, { personal: "hello" })
+			sendMessage({ text: input })
 			setInput("")
 
 		} catch (error) {
