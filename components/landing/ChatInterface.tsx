@@ -1,13 +1,45 @@
 'use client'
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 import { useChat } from "@ai-sdk/react"
 import { DefaultChatTransport } from "ai"
 
 const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 
+	const fetchData = async () => {
+
+		console.log("fetchdata started")
+		const data = await fetch(`/api/chat/${conversationId}`)
+		const { messages } = await data.json()
+		console.log("FetchData ended")
+		return messages
+	}
+
+	const [chatMessages, setChatMessages] = useState<messageType[]>()
+
+	useEffect(() => {
+		try {
+
+			const loadData = async () => {
+				setChatMessages(await fetchData())
+			}
+
+			loadData()
+
+		}
+		catch (error) {
+			console.log("Server Error", error)
+		}
+
+	}, [])
+
+	useEffect(() => {
+		console.log(chatMessages)
+	}, [chatMessages])
+
 	const [input, setInput] = useState<string>('')
+
 	const { messages, sendMessage } = useChat(
 		{
 			transport: new DefaultChatTransport({
@@ -43,6 +75,27 @@ const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 		<>
 			<div className=" flex flex-col w-full h-dvh bg-[#1e1e1e] justify-end  " >
 				<div className="max-w-7xl h-[80%] mx-auto overflow-y-auto " >
+
+					{
+						chatMessages ?
+
+							chatMessages.map((message) => {
+
+								return (
+									<div key={message.id}>
+										<div className={`text-2xl text-[#d4d4d4]`}>{message.role == 'User' ? 'User:' : 'AI:'}</div>
+										<div className="text-[#f5f5dc] text-xl" key={message.id}>
+											{message.content}
+										</div>
+
+									</div>
+
+								)
+
+							}) : <></>
+
+					}
+
 					{messages.map(message => (
 						<div key={message.id}>
 							<div className={`text-2xl text-[#d4d4d4] ${message.role == "user" ? "" : ""}`}>{message.role == 'user' ? 'User:' : 'AI:'}</div>

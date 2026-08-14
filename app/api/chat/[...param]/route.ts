@@ -37,7 +37,24 @@ async function insertUserMessage(
   console.log("Insert Complete");
 }
 
-export async function GET() {}
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ param: string }> },
+) {
+  const { param } = await params;
+  console.log(param);
+  try {
+    const messages = await prisma.message.findMany({
+      where: {
+        conversationId: param[0],
+      },
+    });
+
+    return NextResponse.json({ messages: messages }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to fetch " }, { status: 400 });
+  }
+}
 
 export async function POST(
   req: NextRequest,
@@ -49,9 +66,6 @@ export async function POST(
   if (!lastMessage) {
     return NextResponse.json({ error: "No message provided" }, { status: 400 });
   }
-
-  console.log("raw message:", messages);
-  console.log("converted message", await convertToModelMessages(messages));
 
   await insertUserMessage(lastMessage, param[0]);
 
