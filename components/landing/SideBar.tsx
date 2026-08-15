@@ -25,7 +25,7 @@ const SideBar = async () => {
 
 	return (
 		<>
-			<aside className="sticky left-0 h-dvh  w-1/6 bg-[#2C2C2A]">
+			<aside className="sticky left-0 top-0 h-dvh  w-1/6 bg-[#2C2C2A]">
 				<div className="flex flex-col">
 					<div id="top" className=" flex ">
 						<NewButton></NewButton>

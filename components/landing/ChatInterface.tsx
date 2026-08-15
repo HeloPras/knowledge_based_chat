@@ -73,8 +73,8 @@ const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 
 	return (
 		<>
-			<div className=" flex flex-col w-full h-dvh bg-[#1e1e1e] justify-end  " >
-				<div className="max-w-7xl h-[80%] mx-auto overflow-y-auto " >
+			<div className="">
+				<div className=" flex pl-20 flex-col max-w-7xl  bg-[#1e1e1e] justify-end  " >
 
 					{
 						chatMessages ?
@@ -111,17 +111,17 @@ const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 							}
 						</div>
 					))}
+
 				</div>
-				<div className=" place-content-center   mx-auto max-w-2/3 bottom-3 inline-block   ">
+				<div className=" sticky left-[40%] place-content-center   mx-auto max-w-2/3 bottom-3 inline-block   ">
 					<div className="bg-[#2c2c2a] rounded-2xl" >
 						<form onSubmit={submit}>
-							<input value={input} onChange={(e) => { setInput(e.currentTarget.value) }} type="text" className=" w-150 h-35 ">
+							<input value={input} onChange={(e) => { setInput(e.currentTarget.value) }} type="text" className=" w-150 h-25 ">
 							</input>
 						</form>
 					</div>
-					<div className="h-10"></div>
 				</div>
-			</div >
+			</div>
 		</>
 	)
 }
