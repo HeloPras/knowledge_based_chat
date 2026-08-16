@@ -18,6 +18,8 @@ const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 
 	const [chatMessages, setChatMessages] = useState<messageType[]>()
 
+	// Fetching Data from database
+
 	useEffect(() => {
 		try {
 

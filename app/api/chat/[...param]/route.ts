@@ -26,13 +26,13 @@ async function insertUserMessage(
   console.log("Text check");
   console.log("Performing Insert");
 
-  await prisma.message.create({
-    data: {
-      role: "User",
-      content: message.parts[0].text,
-      conversationId: conversationId,
-    },
-  });
+  // await prisma.message.create({
+  //   data: {
+  //     role: "User",
+  //     content: message.parts[0].text,
+  //     conversationId: conversationId,
+  //   },
+  // });
 
   console.log("Insert Complete");
 }
@@ -85,15 +85,15 @@ export async function POST(
       onChunk({ chunk }) {
         if (chunk.type === "text-delta") assistantText += chunk.text;
       },
-      async onFinish() {
-        await prisma.message.create({
-          data: {
-            role: "AI",
-            content: assistantText,
-            conversationId: param[0],
-          },
-        });
-      },
+      // async onFinish() {
+      //   await prisma.message.create({
+      //     data: {
+      //       role: "AI",
+      //       content: assistantText,
+      //       conversationId: param[0],
+      //     },
+      //   });
+      // },
     });
     const message = createUIMessageStreamResponse({
       stream: toUIMessageStream({ stream: result.stream }),
