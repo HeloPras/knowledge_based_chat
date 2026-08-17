@@ -12,7 +12,7 @@ import { google } from "@ai-sdk/google";
 import { prisma } from "@/lib/prisma/client";
 
 interface insideContent {
-  type: string;
+  type: "text";
   text: string;
 }
 
@@ -42,8 +42,16 @@ async function insertUserMessage(
   console.log("Insert Complete");
 }
 
-const converToUIMessage = (data: { role: string; content: string }[]) => {
-  return;
+const converToUIMessage = (datas: { role: string; content: string }[]) => {
+  const transformedData: { role: string; content: insideContent[][] }[] =
+    datas.map((data) => {
+      return {
+        role: data.role,
+        content: [[{ type: "text", text: data.content }]],
+      };
+    });
+
+  console.log(transformedData);
 };
 
 export async function GET(
