@@ -4,11 +4,11 @@ import { useEffect, useState } from "react"
 
 import { useChat } from "@ai-sdk/react"
 import { DefaultChatTransport } from "ai"
+import { init } from "next/dist/compiled/webpack/webpack"
 
 const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 
 	const fetchData = async () => {
-
 		console.log("fetchdata started")
 		const data = await fetch(`/api/chat/${conversationId}`)
 		const { messages } = await data.json()
@@ -18,7 +18,7 @@ const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 
 	const [chatMessages, setChatMessages] = useState<messageType[]>()
 
-	// Fetching Data from database
+	// Fetching Initial Data from database
 
 	useEffect(() => {
 		try {
@@ -36,10 +36,10 @@ const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 
 	}, [])
 
-	useEffect(() => {
-		console.log(chatMessages)
-	}, [chatMessages])
-
+	// useEffect(() => {
+	// 	console.log(chatMessages)
+	// }, [chatMessages])
+	//
 	const [input, setInput] = useState<string>('')
 
 	const { messages, sendMessage } = useChat(
@@ -50,12 +50,15 @@ const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 		})
 
 
+	const [initialReq, setInitialReq] = useState(true)
+
 	const submit = async (e: React.FormEvent<HTMLFormElement>) => {
 
 		e.preventDefault()
 		try {
-			sendMessage({ text: input })
+			sendMessage({ text: input }, { body: { initialReq: initialReq } })
 			setInput("")
+			setInitialReq(false)
 
 		} catch (error) {
 			console.log(error)

@@ -11,6 +11,11 @@ import {
 import { google } from "@ai-sdk/google";
 import { prisma } from "@/lib/prisma/client";
 
+interface insideContent {
+  type: string;
+  text: string;
+}
+
 async function insertUserMessage(
   message: UIMessage<unknown, UIDataTypes, UITools>,
   conversationId: string,
@@ -28,7 +33,7 @@ async function insertUserMessage(
 
   // await prisma.message.create({
   //   data: {
-  //     role: "User",
+  //     role: "user",
   //     content: message.parts[0].text,
   //     conversationId: conversationId,
   //   },
@@ -37,12 +42,16 @@ async function insertUserMessage(
   console.log("Insert Complete");
 }
 
+const converToUIMessage = (data: { role: string; content: string }[]) => {
+  return;
+};
+
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ param: string }> },
 ) {
   const { param } = await params;
-  console.log(param);
+  // console.log(param);
   try {
     const messages = await prisma.message.findMany({
       where: {
@@ -61,7 +70,10 @@ export async function POST(
   { params }: { params: Promise<{ param: string }> },
 ) {
   const { param } = await params;
-  const { messages }: { messages: UIMessage[] } = await req.json();
+  const {
+    messages,
+    initialReq,
+  }: { messages: UIMessage[]; initialReq: boolean } = await req.json();
   const lastMessage = messages.at(-1);
   if (!lastMessage) {
     return NextResponse.json({ error: "No message provided" }, { status: 400 });
@@ -73,7 +85,11 @@ export async function POST(
 
   //
   //
-  // console.log(await convertToModelMessages(messages));
+  console.log("this is UIMessage: ", messages);
+  const displayMessage = await convertToModelMessages(messages);
+  console.log(displayMessage);
+  console.log(displayMessage.at(-1).content);
+
   let assistantText = "";
   try {
     const result = streamText({
@@ -85,7 +101,7 @@ export async function POST(
       onChunk({ chunk }) {
         if (chunk.type === "text-delta") assistantText += chunk.text;
       },
-      // async onFinish() {
+      // async onEnd() {
       //   await prisma.message.create({
       //     data: {
       //       role: "AI",
