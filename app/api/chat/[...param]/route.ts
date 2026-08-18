@@ -7,14 +7,15 @@ import {
   convertToModelMessages,
   toUIMessageStream,
   createUIMessageStreamResponse,
+  ModelMessage,
 } from "ai";
 import { google } from "@ai-sdk/google";
 import { prisma } from "@/lib/prisma/client";
 
-interface insideContent {
-  type: "text";
-  text: string;
-}
+// interface insideContent {
+//   type: "user" | "system" | "assistant" | "tool";
+//   text: string;
+// }
 
 async function insertUserMessage(
   message: UIMessage<unknown, UIDataTypes, UITools>,
@@ -31,27 +32,27 @@ async function insertUserMessage(
   console.log("Text check");
   console.log("Performing Insert");
 
-  // await prisma.message.create({
-  //   data: {
-  //     role: "user",
-  //     content: message.parts[0].text,
-  //     conversationId: conversationId,
-  //   },
-  // });
+  await prisma.message.create({
+    data: {
+      role: "user",
+      content: message.parts[0].text,
+      conversationId: conversationId,
+    },
+  });
 
   console.log("Insert Complete");
 }
 
-const converToUIMessage = (datas: { role: string; content: string }[]) => {
-  const transformedData: { role: string; content: insideContent[][] }[] =
-    datas.map((data) => {
-      return {
-        role: data.role,
-        content: [[{ type: "text", text: data.content }]],
-      };
-    });
+const converToModelMessage = (datas: { role: Roles; content: string }[]) => {
+  const transformedData: ModelMessage[] = datas.map((data) => {
+    return {
+      role: data.role === "user" ? "user" : "assistant",
+      content: [{ type: "text", text: data.content }],
+    };
+  });
 
-  console.log(transformedData);
+  console.log("this is the transformed data", transformedData);
+  return transformedData;
 };
 
 export async function GET(
@@ -78,13 +79,42 @@ export async function POST(
   { params }: { params: Promise<{ param: string }> },
 ) {
   const { param } = await params;
+
   const {
     messages,
     initialReq,
   }: { messages: UIMessage[]; initialReq: boolean } = await req.json();
   const lastMessage = messages.at(-1);
+  let initialData: { role: Roles; content: string }[] = [];
   if (!lastMessage) {
     return NextResponse.json({ error: "No message provided" }, { status: 400 });
+  }
+
+  const fetchData = async () => {
+    try {
+      return await prisma.message.findMany({
+        select: {
+          role: true,
+          content: true,
+        },
+        where: {
+          conversationId: param[0],
+        },
+      });
+    } catch (error) {
+      console.error("Couldn't fetch data", error);
+      throw error;
+    }
+  };
+
+  if (initialReq) {
+    initialData = await fetchData();
+    if (!initialData) {
+      return NextResponse.json(
+        { message: "No fields were returned" },
+        { status: 200 },
+      );
+    }
   }
 
   await insertUserMessage(lastMessage, param[0]);
@@ -93,31 +123,39 @@ export async function POST(
 
   //
   //
-  console.log("this is UIMessage: ", messages);
   const displayMessage = await convertToModelMessages(messages);
-  console.log(displayMessage);
-  console.log(displayMessage.at(-1).content);
+  // console.log(displayMessage.at(-1).content);
 
   let assistantText = "";
+  let prompt: ModelMessage[];
+  const currentPrompt = await convertToModelMessages(messages);
+
+  if (initialReq) {
+    const transformedInitalData = converToModelMessage(initialData);
+    prompt = [...transformedInitalData, ...currentPrompt];
+  } else {
+    prompt = currentPrompt;
+  }
+
   try {
     const result = streamText({
       model: google("gemini-2.5-flash"),
-      prompt: await convertToModelMessages(messages),
+      prompt: prompt,
       instructions:
         "Only provide with text, don't respond with markdown, points, headlines, bulletpoints, only text",
 
       onChunk({ chunk }) {
         if (chunk.type === "text-delta") assistantText += chunk.text;
       },
-      // async onEnd() {
-      //   await prisma.message.create({
-      //     data: {
-      //       role: "AI",
-      //       content: assistantText,
-      //       conversationId: param[0],
-      //     },
-      //   });
-      // },
+      async onEnd() {
+        await prisma.message.create({
+          data: {
+            role: "assistant",
+            content: assistantText,
+            conversationId: param[0],
+          },
+        });
+      },
     });
     const message = createUIMessageStreamResponse({
       stream: toUIMessageStream({ stream: result.stream }),

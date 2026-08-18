@@ -72,7 +72,7 @@ model Message {
 	id Int @id @default(autoincrement())
 	conversation Conversation @relation(fields:[conversationId], references:[id],onDelete: Cascade)
 	conversationId String
-	role Role @default(System)
+	role Role @default(system)
 	content String
 }
 
@@ -98,9 +98,10 @@ model VerificationToken {
 }
 
 enum Role {
-	AI
-		User
-		System
+	assistant
+		user
+		system
+		tool
 }
 
 
