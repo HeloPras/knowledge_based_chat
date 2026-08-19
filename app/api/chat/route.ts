@@ -65,6 +65,7 @@ export async function POST(req: NextRequest) {
       },
       async onFinish() {
         // await prisma.message.create({
+        //
         //   data: {
         //     role: "AI",
         //     content: assistantText,
