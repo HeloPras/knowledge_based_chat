@@ -5,6 +5,8 @@ import { useEffect, useState } from "react"
 import { useChat } from "@ai-sdk/react"
 import { DefaultChatTransport } from "ai"
 import { init } from "next/dist/compiled/webpack/webpack"
+import { Plus } from "lucide-react"
+import Modal from "./Modal/Modal"
 
 const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 
@@ -51,6 +53,14 @@ const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 
 
 	const [initialReq, setInitialReq] = useState(true)
+
+	const [modalOpen, setModalOpen] = useState(false)
+
+	const modalClicked = () => {
+
+		setModalOpen(true)
+
+	}
 
 	const submit = async (e: React.FormEvent<HTMLFormElement>) => {
 
@@ -118,8 +128,12 @@ const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 					))}
 
 				</div>
+				{modalOpen && <Modal funk={setModalOpen} ></Modal>}
 				<div className=" sticky left-[40%] place-content-center   mx-auto max-w-2/3 bottom-3 inline-block   ">
 					<div className="bg-[#2c2c2a] rounded-2xl" >
+						<button className="cursor-pointer " onClick={modalClicked}>
+							<Plus></Plus>
+						</button>
 						<form onSubmit={submit}>
 							<input value={input} onChange={(e) => { setInput(e.currentTarget.value) }} type="text" className=" w-150 h-25 ">
 							</input>
