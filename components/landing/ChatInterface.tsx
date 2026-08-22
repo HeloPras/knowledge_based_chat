@@ -57,11 +57,6 @@ const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 
 	const [modalOpen, setModalOpen] = useState(false)
 
-	const modalClicked = () => {
-
-		setModalOpen(true)
-
-	}
 
 	const submit = async (e: React.FormEvent<HTMLFormElement>) => {
 
@@ -129,10 +124,10 @@ const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 					))}
 
 				</div>
-				{modalOpen && <Modal funk={setModalOpen} ></Modal>}
+				{modalOpen && <Modal onClose={() => { setModalOpen(false) }} ></Modal>}
 				<div className=" sticky left-[40%] place-content-center   mx-auto max-w-2/3 bottom-3 inline-block   ">
 					<div className="bg-[#2c2c2a] rounded-2xl" >
-						<button className="cursor-pointer " onClick={modalClicked}>
+						<button className="cursor-pointer " onClick={() => { setModalOpen(true) }}>
 							<Plus></Plus>
 						</button>
 						<form onSubmit={submit}>
