@@ -1,5 +1,6 @@
 "use client"
 
+import { Form } from "lucide-react";
 import { ChangeEvent, useEffect, useState } from "react";
 
 
@@ -7,14 +8,45 @@ import { ChangeEvent, useEffect, useState } from "react";
 const Modal = ({ onClose }: { onClose: () => void }) => {
 
 	const [isDragging, setIsDragging] = useState(false)
-	const [file, setFile] = useState<FileList | null>()
+	const [file, setFile] = useState<File | null>(null)
 
-	// const dropped = (e: React.DragEvent<HTMLInputElement>) => {
-	const dropped = (e: ChangeEvent<HTMLInputElement> | React.DragEvent<HTMLInputElement>) => {
 
-		setFile(e.currentTarget.files)
+	const fileChanged = (e: ChangeEvent<HTMLInputElement>) => {
+
+
+		const file = e.currentTarget.files
+
+		if (file && file.length > 0) {
+			setFile(file[0])
+		}
 		setIsDragging(false)
+
 	}
+
+	const uploadFile = async () => {
+
+		if (!file) return
+
+		const formdata = new FormData()
+		formdata.set("file", file)
+
+		try {
+
+
+			const response = await fetch("/api/chat/uploadFile",
+				{ method: "POST", body: formdata })
+			const body = await response.json()
+
+			console.log(response)
+
+			console.log(body)
+
+		} catch (error) {
+			console.log(error)
+		}
+
+	}
+
 
 	useEffect(() => { console.log(file) }, [file])
 
@@ -54,7 +86,13 @@ const Modal = ({ onClose }: { onClose: () => void }) => {
 
 				<div className="mt-6">
 					<div className={`border border-dashed ${isDragging ? "border-blue-300" : "border-white"} `}>
-						<input type="file" multiple={false} onDragEnter={() => setIsDragging(true)} onDragExit={() => setIsDragging(false)} onDrop={(e) => dropped(e)} />
+						<input type="file" multiple={false} onDragEnter={() => setIsDragging(true)} onDragExit={() => setIsDragging(false)}
+
+							onChange={(e) => {
+								fileChanged(e)
+							}}
+
+						/>
 					</div>
 				</div>
 
@@ -68,6 +106,7 @@ const Modal = ({ onClose }: { onClose: () => void }) => {
 
 					<button
 						className="rounded-lg bg-white px-4 py-2 text-black hover:bg-gray-200"
+						onClick={uploadFile}
 					>
 						Continue
 					</button>
