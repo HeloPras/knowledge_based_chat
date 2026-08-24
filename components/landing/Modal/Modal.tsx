@@ -31,18 +31,17 @@ const Modal = ({ onClose }: { onClose: () => void }) => {
 		formdata.set("file", file)
 
 		try {
-
-
 			const response = await fetch("/api/chat/uploadFile",
 				{ method: "POST", body: formdata })
-			const body = await response.json()
+			const { data, error } = await response.json()
+			console.log(data)
 
-			console.log(response)
-
-			console.log(body)
+			if (!response.ok) {
+				throw Error(error)
+			}
 
 		} catch (error) {
-			console.log(error)
+			console.error("Faced Issue", error)
 		}
 
 	}
