@@ -1,44 +1,47 @@
 import { auth } from "@/lib/auth/auth";
-import { supabase } from "@/lib/supabase/client";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const user = await auth();
-
-  console.log(user?.user?.id);
-
-  const body = await req.formData();
-  const file = body.get("file");
-
-  if (!file) {
-    return NextResponse.json({ error: "no file uploaded" }, { status: 400 });
-  }
+  const bucket = supabaseAdmin.storage.from("knowledge_base_file");
 
   try {
+    const user = await auth();
+
+    const body = await req.formData();
+
+    const file = body.get("file");
+
+    if (!file || !(file instanceof File)) {
+      return NextResponse.json({ error: "no file uploaded" }, { status: 400 });
+    }
+
     if (!user?.user?.id) {
       throw Error("User is not authenticated");
     }
 
-    const bucketAvailable = await supabase.storage.getBucket(user.user.id);
+    // const listAvailable = await bucket.list(user.user.id);
 
-    if (bucketAvailable.error) {
-      throw Error(bucketAvailable.error.message);
-    }
-
-    if (!bucketAvailable.data) {
-      const { error } = await supabase.storage.createBucket(user.user.id);
-      if (error) {
-        throw Error(error.message);
-      }
-    }
-
-    const uploadedData = await supabase.storage
-      .from("knowledge_base_file")
-      .upload(user.user.id, file);
+    // if (listAvailable.error) {
+    //   throw Error(listAvailable.error.message);
+    // }
+    //
+    // if (!listAvailable.data) {
+    //   const { error } = await bucket.list(user.user.id);
+    //   if (error) {
+    //     throw Error(error.message);
+    //   }
+    // }
+    //
+    const uploadedData = await bucket.upload(
+      `${user.user.id}/${file.name}`,
+      file,
+    );
 
     if (uploadedData.error) {
       throw Error(uploadedData.error.message);
     }
+
     console.log(uploadedData);
 
     return NextResponse.json({ data: uploadedData.data }, { status: 200 });
