@@ -1,8 +1,10 @@
 import { auth } from "@/lib/auth/auth";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { supabase } from "@/lib/supabase/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
+  // const bucket = supabaseAdmin.storage.from("knowledge_base_file");
   const bucket = supabaseAdmin.storage.from("knowledge_base_file");
 
   try {
@@ -40,17 +42,14 @@ export async function POST(req: NextRequest) {
     );
 
     if (uploadedData.error) {
-      throw Error(uploadedData.error.message);
+      throw Error(`uploadedData Error: ${uploadedData.error.message}`);
     }
 
     console.log(uploadedData);
 
     return NextResponse.json({ data: uploadedData.data }, { status: 200 });
   } catch (error) {
-    return NextResponse.json(
-      { error: `Faced Issues while uploading ${error}` },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: ` ${error}` }, { status: 500 });
   }
 
   // console.log("Its working");

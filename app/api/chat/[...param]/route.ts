@@ -57,7 +57,7 @@ const converToModelMessage = (datas: { role: Roles; content: string }[]) => {
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ param: string }> },
+  { params }: { params: Promise<{ param: string[] }> },
 ) {
   const { param } = await params;
   // console.log(param);
@@ -76,7 +76,7 @@ export async function GET(
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: Promise<{ param: string }> },
+  { params }: { params: Promise<{ param: string[] }> },
 ) {
   const { param } = await params;
 

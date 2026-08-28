@@ -7,7 +7,7 @@ import { auth } from "@/lib/auth/auth";
 import { prisma } from "@/lib/prisma/client";
 import { notFound, redirect } from "next/navigation";
 
-const Page = async ({ params }: { params: Promise<{ param: string }> }) => {
+const Page = async ({ params }: { params: Promise<{ param: string[] }> }) => {
 
 	const session = await auth()
 
@@ -36,7 +36,7 @@ const Page = async ({ params }: { params: Promise<{ param: string }> }) => {
 					<SideBar></SideBar>
 					<div>
 						<SignOut></SignOut>
-						<ChatInterface conversationId={param} ></ChatInterface>
+						<ChatInterface conversationId={param[0]} ></ChatInterface>
 					</div>
 				</div>
 			</div>
