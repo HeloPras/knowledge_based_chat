@@ -124,7 +124,7 @@ const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 					))}
 
 				</div>
-				{modalOpen && <Modal onClose={() => { setModalOpen(false) }} ></Modal>}
+				{modalOpen && <Modal conversationId={conversationId} onClose={() => { setModalOpen(false) }} ></Modal>}
 				<div className=" sticky left-[40%] place-content-center   mx-auto max-w-2/3 bottom-3 inline-block   ">
 					<div className="bg-[#2c2c2a] rounded-2xl" >
 						<button className="cursor-pointer " onClick={() => { setModalOpen(true) }}>

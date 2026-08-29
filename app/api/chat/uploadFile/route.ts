@@ -1,7 +1,8 @@
 import { auth } from "@/lib/auth/auth";
-import { supabaseAdmin } from "@/lib/supabase/admin";
 import { supabase } from "@/lib/supabase/client";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma/client";
 
 export async function POST(req: NextRequest) {
   // const bucket = supabaseAdmin.storage.from("knowledge_base_file");
@@ -13,6 +14,20 @@ export async function POST(req: NextRequest) {
     const body = await req.formData();
 
     const file = body.get("file");
+    const conversationId = body.get("conversationId") as string;
+
+    if (!conversationId) {
+      throw Error("No Conversation Id provided");
+    }
+    const exists = await prisma.conversation.findFirst({
+      where: {
+        id: conversationId,
+      },
+    });
+
+    if (!exists) {
+      throw Error("Conversation Doesn't Exists");
+    }
 
     if (!file || !(file instanceof File)) {
       return NextResponse.json({ error: "no file uploaded" }, { status: 400 });
@@ -22,22 +37,8 @@ export async function POST(req: NextRequest) {
       throw Error("User is not authenticated");
     }
 
-    // const listAvailable = await bucket.list(user.user.id);
-
-    // if (listAvailable.error) {
-    //   throw Error(listAvailable.error.message);
-    // }
-    //
-    // if (!listAvailable.data) {
-    //   const { error } = await bucket.list(user.user.id);
-    //   if (error) {
-    //     throw Error(error.message);
-    //   }
-    // }
-    //
-
     const uploadedData = await bucket.upload(
-      `${user.user.id}/${file.name}`,
+      `${user.user.id}/${conversationId}/${file.name}`,
       file,
     );
 
@@ -45,10 +46,12 @@ export async function POST(req: NextRequest) {
       throw Error(`uploadedData Error: ${uploadedData.error.message}`);
     }
 
-    console.log(uploadedData);
-
-    return NextResponse.json({ data: uploadedData.data }, { status: 200 });
+    return NextResponse.json(
+      { message: "Successfully Uploaded" },
+      { status: 200 },
+    );
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: ` ${error}` }, { status: 500 });
   }
 

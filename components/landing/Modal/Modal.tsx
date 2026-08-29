@@ -5,10 +5,11 @@ import { ChangeEvent, useEffect, useState } from "react";
 
 
 
-const Modal = ({ onClose }: { onClose: () => void }) => {
+const Modal = ({ onClose, conversationId }: { onClose: () => void, conversationId: string }) => {
 
 	const [isDragging, setIsDragging] = useState(false)
 	const [file, setFile] = useState<File | null>(null)
+	const [loading, setLoading] = useState<boolean>(false)
 
 
 	const fileChanged = (e: ChangeEvent<HTMLInputElement>) => {
@@ -25,29 +26,35 @@ const Modal = ({ onClose }: { onClose: () => void }) => {
 
 	const uploadFile = async () => {
 
+		setLoading(true)
 		if (!file) return
 
 		const formdata = new FormData()
 		formdata.set("file", file)
+		formdata.set("conversationId", conversationId)
 
 		try {
 			const response = await fetch("/api/chat/uploadFile",
 				{ method: "POST", body: formdata })
-			const { data, error } = await response.json()
-			console.log(data)
+			const { error } = await response.json()
 
 			if (!response.ok) {
 				throw Error(error)
 			}
 
+
+			setLoading(false)
+			onClose()
+
+
 		} catch (error) {
 			console.error("Faced Issue", error)
+			setLoading(false)
 		}
 
 	}
 
 
-	useEffect(() => { console.log(file) }, [file])
 
 	const close = () => {
 		onClose()
@@ -104,6 +111,7 @@ const Modal = ({ onClose }: { onClose: () => void }) => {
 					</button>
 
 					<button
+						disabled={loading}
 						className="rounded-lg bg-white px-4 py-2 text-black hover:bg-gray-200"
 						onClick={uploadFile}
 					>
