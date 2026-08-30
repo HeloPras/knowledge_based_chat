@@ -1,8 +1,9 @@
 "use client"
 
+import { pdfTextExtract } from "@/utils/pdf/pdfTextExtract";
 import { Form } from "lucide-react";
 import { ChangeEvent, useEffect, useState } from "react";
-
+import { extractText } from "unpdf"
 
 
 const Modal = ({ onClose, conversationId }: { onClose: () => void, conversationId: string }) => {
@@ -24,24 +25,63 @@ const Modal = ({ onClose, conversationId }: { onClose: () => void, conversationI
 
 	}
 
+
+	const chunkFile = async () => {
+
+		try {
+			if (!file) {
+				throw Error("No File Provided for chunking")
+			}
+
+			const texts = await pdfTextExtract(file)
+
+			if (!texts) throw Error("Can't extract text from pdf")
+
+			const response = await fetch("/api/chat/modal", {
+				method: "POST", body: JSON.stringify({ texts, "conversationId": conversationId })
+			})
+
+			const { message } = await response.json()
+
+
+			console.log(message)
+
+
+
+
+
+
+
+		} catch (error) {
+			console.error(error)
+		}
+
+
+	}
+
 	const uploadFile = async () => {
 
 		setLoading(true)
-		if (!file) return
-
-		const formdata = new FormData()
-		formdata.set("file", file)
-		formdata.set("conversationId", conversationId)
 
 		try {
-			const response = await fetch("/api/chat/uploadFile",
-				{ method: "POST", body: formdata })
-			const { error } = await response.json()
-
-			if (!response.ok) {
-				throw Error(error)
+			if (!file) {
+				throw Error("No file Uploaded")
 			}
+			//
+			// const formdata = new FormData()
+			// formdata.set("file", file)
+			// formdata.set("conversationId", conversationId)
+			//
+			// const response = await fetch("/api/chat/uploadFile",
+			// 	{ method: "POST", body: formdata })
+			// const { error } = await response.json()
+			//
+			// if (!response.ok) {
+			// 	throw Error(error)
+			// }
 
+			//after uploading file, start the chunking of the file
+			chunkFile()
 
 			setLoading(false)
 			onClose()
@@ -115,7 +155,7 @@ const Modal = ({ onClose, conversationId }: { onClose: () => void, conversationI
 						className="rounded-lg bg-white px-4 py-2 text-black hover:bg-gray-200"
 						onClick={uploadFile}
 					>
-						Continue
+						{loading ? ". . ." : "Continue"}
 					</button>
 				</div>
 			</div>
