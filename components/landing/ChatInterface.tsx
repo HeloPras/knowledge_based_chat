@@ -1,25 +1,41 @@
 'use client'
 
 import { useEffect, useState } from "react"
-
 import { useChat } from "@ai-sdk/react"
 import { DefaultChatTransport } from "ai"
 import { init } from "next/dist/compiled/webpack/webpack"
 import { Plus } from "lucide-react"
 import Modal from "./Modal/Modal"
+import { fetchAttachment } from "@/utils/home/fetchAttachment"
 
 const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 
 	const fetchData = async () => {
-		console.log("fetchdata started")
 		const data = await fetch(`/api/chat/${conversationId}`)
 		const { messages } = await data.json()
-		console.log("FetchData ended")
 		return messages
 	}
 
-	const [chatMessages, setChatMessages] = useState<messageType[]>()
+	const fetchAttachment = async () => {
 
+		if (!conversationId) {
+			setAttachmentAvailable(false)
+			return
+		}
+
+		const data = await fetch(`/api/chat/attachment`, { method: 'POST', body: JSON.stringify({ conversationId: conversationId }) })
+
+		const body = await data.json()
+
+		if (body.exists) {
+			setAttachmentAvailable(true)
+		}
+
+	}
+
+
+	const [chatMessages, setChatMessages] = useState<messageType[]>()
+	const [attachmentAvailable, setAttachmentAvailable] = useState<boolean>(false)
 	// Fetching Initial Data from database
 	//
 
@@ -28,14 +44,19 @@ const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 
 			const loadData = async () => {
 				setChatMessages(await fetchData())
+				fetchAttachment()
 			}
 
 			loadData()
 
 		}
+
 		catch (error) {
 			console.log("Server Error", error)
 		}
+
+
+
 
 	}, [])
 
@@ -127,9 +148,9 @@ const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 				{modalOpen && <Modal conversationId={conversationId} onClose={() => { setModalOpen(false) }} ></Modal>}
 				<div className=" sticky left-[40%] place-content-center   mx-auto max-w-2/3 bottom-3 inline-block   ">
 					<div className="bg-[#2c2c2a] rounded-2xl" >
-						<button className="cursor-pointer " onClick={() => { setModalOpen(true) }}>
+						{!attachmentAvailable && <button className="cursor-pointer " onClick={() => { setModalOpen(true) }}>
 							<Plus></Plus>
-						</button>
+						</button>}
 						<form onSubmit={submit}>
 							<input value={input} onChange={(e) => { setInput(e.currentTarget.value) }} type="text" className=" w-150 h-25 ">
 							</input>

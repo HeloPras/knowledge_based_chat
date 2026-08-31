@@ -44,14 +44,6 @@ const Modal = ({ onClose, conversationId }: { onClose: () => void, conversationI
 			const { message } = await response.json()
 
 
-			console.log(message)
-
-
-
-
-
-
-
 		} catch (error) {
 			console.error(error)
 		}
