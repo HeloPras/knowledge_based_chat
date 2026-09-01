@@ -107,7 +107,6 @@ const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 		<>
 			<div className="">
 				<div className=" flex pl-20 flex-col max-w-7xl  bg-[#1e1e1e] justify-end  " >
-
 					{
 						chatMessages ?
 
