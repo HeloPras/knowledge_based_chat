@@ -3,19 +3,19 @@
 import { useEffect, useState } from "react"
 import { useChat } from "@ai-sdk/react"
 import { DefaultChatTransport } from "ai"
-import { init } from "next/dist/compiled/webpack/webpack"
 import { Plus } from "lucide-react"
 import Modal from "./Modal/Modal"
-import { fetchAttachment } from "@/utils/home/fetchAttachment"
 
 const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 
+	// function to fetch past history message
 	const fetchData = async () => {
 		const data = await fetch(`/api/chat/${conversationId}`)
 		const { messages } = await data.json()
 		return messages
 	}
 
+	// function for finding if user has already uploaded file for this current chat
 	const fetchAttachment = async () => {
 
 		if (!conversationId) {
@@ -34,11 +34,10 @@ const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 
 	}
 
-
 	const [chatMessages, setChatMessages] = useState<messageType[]>()
 	const [attachmentAvailable, setAttachmentAvailable] = useState<boolean>(false)
-	// Fetching Initial Data from database
 
+	// Fetching Initial Data from database
 	useEffect(() => {
 		try {
 
@@ -56,10 +55,6 @@ const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 		}
 	}, [])
 
-	// useEffect(() => {
-	// 	console.log(chatMessages)
-	// }, [chatMessages])
-	//
 	const [input, setInput] = useState<string>('')
 
 	const { messages, sendMessage } = useChat(
