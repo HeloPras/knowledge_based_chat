@@ -19,6 +19,7 @@ const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 	const fetchAttachment = async () => {
 
 		if (!conversationId) {
+
 			setAttachmentAvailable(false)
 			return
 		}
@@ -37,7 +38,6 @@ const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 	const [chatMessages, setChatMessages] = useState<messageType[]>()
 	const [attachmentAvailable, setAttachmentAvailable] = useState<boolean>(false)
 	// Fetching Initial Data from database
-	//
 
 	useEffect(() => {
 		try {
@@ -54,10 +54,6 @@ const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 		catch (error) {
 			console.log("Server Error", error)
 		}
-
-
-
-
 	}, [])
 
 	// useEffect(() => {
