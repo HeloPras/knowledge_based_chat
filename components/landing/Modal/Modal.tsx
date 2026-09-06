@@ -1,9 +1,7 @@
 "use client"
 
 import { pdfTextExtract } from "@/utils/pdf/pdfTextExtract";
-import { Form } from "lucide-react";
-import { ChangeEvent, useEffect, useState } from "react";
-import { extractText } from "unpdf"
+import { ChangeEvent, useState } from "react";
 
 
 const Modal = ({ onClose, conversationId }: { onClose: () => void, conversationId: string }) => {

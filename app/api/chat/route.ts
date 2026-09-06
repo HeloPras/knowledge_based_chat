@@ -23,6 +23,7 @@ async function insertUserMessage(
     return;
   }
   console.log("Text check");
+
   console.log("Performing Insert");
 
   // await prisma.message.create({

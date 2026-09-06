@@ -28,6 +28,7 @@ const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 
 		const body = await data.json()
 
+
 		if (body.exists) {
 			setAttachmentAvailable(true)
 		}
