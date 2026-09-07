@@ -122,7 +122,11 @@ export async function POST(
 
   await insertUserMessage(lastMessage, param[0]);
 
-  // console.log(messages[messages.length - 1]?.parts[0]?.text ?? "");
+  // console.log("this is the message", messages);
+  // console.log(
+  //   "Inside of the messages",
+  //   messages[messages.length - 1]?.parts[0]?.text ?? "",
+  // );
 
   //
   //
@@ -136,7 +140,17 @@ export async function POST(
     prompt = [...transformedInitalData, ...currentPrompt];
   } else {
     prompt = currentPrompt;
-  }
+  
+  let tempStore = prompt.at(-1)?.content || "";
+
+
+// from here start the embedding of the tempStore and get the similar context
+  
+  //
+  
+
+  console.log("this is the prompt", prompt);
+  console.log("inside the last prompt", prompt.at(-1)?.content);
 
   try {
     const result = streamText({
