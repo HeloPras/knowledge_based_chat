@@ -56,6 +56,7 @@ const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 		}
 	}, [])
 
+
 	const [input, setInput] = useState<string>('')
 
 	const { messages, sendMessage } = useChat(
