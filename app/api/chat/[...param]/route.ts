@@ -17,6 +17,7 @@ import { prisma } from "@/lib/prisma/client";
 //   text: string;
 // }
 
+// function to insert User Message into Message Table
 async function insertUserMessage(
   message: UIMessage<unknown, UIDataTypes, UITools>,
   conversationId: string,
@@ -43,6 +44,7 @@ async function insertUserMessage(
   console.log("Insert Complete");
 }
 
+// function to convert user message into the format that is consumed by modal
 const converToModelMessage = (datas: { role: Roles; content: string }[]) => {
   const transformedData: ModelMessage[] = datas.map((data) => {
     return {
@@ -55,12 +57,12 @@ const converToModelMessage = (datas: { role: Roles; content: string }[]) => {
   return transformedData;
 };
 
+// get function
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ param: string[] }> },
 ) {
   const { param } = await params;
-  // console.log(param);
   try {
     const messages = await prisma.message.findMany({
       where: {
@@ -74,6 +76,7 @@ export async function GET(
   }
 }
 
+// Post function
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ param: string[] }> },
@@ -123,8 +126,6 @@ export async function POST(
 
   //
   //
-  const displayMessage = await convertToModelMessages(messages);
-  // console.log(displayMessage.at(-1).content);
 
   let assistantText = "";
   let prompt: ModelMessage[];
@@ -141,8 +142,78 @@ export async function POST(
     const result = streamText({
       model: google("gemini-2.5-flash"),
       prompt: prompt,
-      instructions:
-        "Only provide with text, don't respond with markdown, points, headlines, bulletpoints, only text",
+      instructions: `
+You are a knowledge-based assistant. Your job is to answer the user's question using **only the information provided in the knowledge base context**.
+
+## Rules
+
+1. **Use only the provided context**
+
+   * The provided knowledge base context is your only source of information.
+   * Do not use your general knowledge, training data, assumptions, or outside information.
+   * Do not guess, hallucinate, or invent information.
+   * Every factual claim in your answer must be supported by the provided context.
+
+2. **When the answer is found in the context**
+
+   * Answer the user's question directly and clearly.
+   * You may summarize, explain, or combine information from different parts of the context.
+   * Make sure the answer remains faithful to the information provided in the context.
+
+3. **When the answer is NOT found in the context**
+
+   * Respond with exactly:
+
+   **Not found in the knowledge base.**
+
+   * Do not provide an answer using your general knowledge.
+   * Do not guess or speculate about the answer.
+
+4. **When the context only partially answers the question**
+
+   * Provide only the information that is supported by the context.
+   * If the missing part is necessary to properly answer the user's question, respond:
+
+   **Not found in the knowledge base.**
+
+   * Do not fill in the missing information using outside knowledge.
+
+5. **When there is no relevant information**
+
+   * If the provided context does not contain information relevant to the user's question, respond:
+
+   **Not found in the knowledge base.**
+
+6. **Conflicting information**
+
+   * If the context contains conflicting information, do not make up a resolution.
+   * Explain the conflict using only the information present in the context.
+
+7. **Unclear questions**
+
+   * If the user's question is unclear, ask a clarification question if the context provides enough information to do so.
+   * Do not assume what the user means.
+
+## Input
+
+### Knowledge Base Context
+
+{{context}}
+
+### User Question
+
+{{user_message}}
+
+## Important
+
+**Never use information outside of the provided knowledge base context.**
+
+If the answer cannot be found or reliably determined from the context, respond only with:
+
+**Not found in the knowledge base.**
+
+Note: Only answer it in text, no need of any beautifying, any heading or bold or italics, just plain text
+	  `,
 
       onChunk({ chunk }) {
         if (chunk.type === "text-delta") assistantText += chunk.text;

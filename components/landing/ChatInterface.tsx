@@ -75,7 +75,15 @@ const ChatInterface = ({ conversationId }: { conversationId?: string }) => {
 
 		e.preventDefault()
 		try {
-			sendMessage({ text: input }, { body: { initialReq: initialReq } })
+
+			const data = fetch('/api/chat/knowledgeContext', { method: 'POST', body: input })
+
+			sendMessage({
+				text: `
+
+
+						user_message:${input}`
+			}, { body: { initialReq: initialReq } })
 			setInput("")
 			setInitialReq(false)
 
