@@ -178,6 +178,7 @@ export async function POST(
   console.log("This is the tempStore", tempStore);
 
   // from here start the embedding of the tempStore and get the similar context
+  //
 
   const data = await extractingSimilarVectors(tempStore);
 
