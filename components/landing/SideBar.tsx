@@ -8,10 +8,12 @@ import Chats from "./SideBar/chats"
 const loadConversationHistory = async () => {
 
 	try {
-		const history = await getChatHistroy()
+		const history = await getChatHistroy() as chat[]
 		return history
 	} catch (error) {
-		throw Error("Hit an error")
+
+		console.error("Failed to load conversation histroy", error)
+		throw error
 	}
 }
 

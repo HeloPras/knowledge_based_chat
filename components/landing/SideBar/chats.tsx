@@ -1,7 +1,7 @@
 import Link from "next/link"
 
 interface chat {
-	id: number
+	id: string
 	userId: string
 	title: string
 	createdAt: Date

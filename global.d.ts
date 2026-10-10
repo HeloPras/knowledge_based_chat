@@ -5,7 +5,7 @@ interface messageType {
 }
 
 interface chat {
-  id: number;
+  id: string;
   userId: string;
   title: string;
   createdAt: Date;
