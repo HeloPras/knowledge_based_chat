@@ -2,9 +2,16 @@ import ChatInterface from "@/components/landing/ChatInterface";
 import SideBar from "@/components/landing/SideBar";
 import { SignOut } from "@/components/login/auth";
 
+
+
+export const dynamic = "force-dynamic";
+
 export default function Home() {
 
+
+
 	return (
+
 		<>
 			<div className="bg-[#1E1E1E]">
 				<div className="flex ">
