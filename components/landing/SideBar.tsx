@@ -2,6 +2,7 @@
 import { getChatHistroy } from "@/utils/prisma/chatHistory"
 import NewButton from "./SideBar/newbutton"
 import Chats from "./SideBar/chats"
+import { SignOut } from "../login/auth"
 // import { useEffect, useState } from "react"
 
 
@@ -36,6 +37,9 @@ const SideBar = async () => {
 					<div className="flex flex-col ">
 						<Chats chats={chatHistroy}></Chats>
 					</div>
+				</div>
+				<div className="sticky bottom-0">
+					<SignOut></SignOut>
 				</div>
 			</aside>
 		</>

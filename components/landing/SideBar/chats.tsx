@@ -1,6 +1,6 @@
-import Link from "next/link"
+import ChatLink from "./chatlink"
 
-interface chat {
+export interface chat {
 	id: string
 	userId: string
 	title: string
@@ -9,28 +9,24 @@ interface chat {
 }
 
 const Chats = ({ chats }: { chats: chat[] | null }) => {
+	if (!chats || chats.length === 0) {
+		return (
+			<div className="px-3 py-10 text-center">
+				<p className="text-sm text-stone-300">No conversations yet</p>
+				<p className="mt-1 text-xs text-stone-500">Start a new chat and it will show up here.</p>
+			</div>
+		)
+	}
+
 	return (
-		<>
-			<div className="flex flex-col gap-1">
-
-
-				{
-					chats ?
-						chats.map((chat) => {
-							return (
-								<div key={chat.id} className="cursor-pointer hover:bg-[#393936]">
-									<Link href={`/c/${chat.id}`}>
-										{chat.title}
-									</Link>
-								</div>
-							)
-						})
-						: <p>No conversations Yet</p>
-				}
-			</div >
-		</>
+		<ul className="flex flex-col gap-0.5">
+			{chats.map((chat) => (
+				<li key={chat.id}>
+					<ChatLink href={`/c/${chat.id}`} title={chat.title || "Untitled chat"} />
+				</li>
+			))}
+		</ul>
 	)
 }
 
 export default Chats
-

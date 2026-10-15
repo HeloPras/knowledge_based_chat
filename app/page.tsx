@@ -17,7 +17,6 @@ export default function Home() {
 				<div className="flex ">
 					<SideBar></SideBar>
 					<div>
-						<SignOut></SignOut>
 						<ChatInterface></ChatInterface>
 					</div>
 				</div>
